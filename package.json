@@ -16,8 +16,12 @@
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
     "gravatar": "^1.8.1",
+    "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
+    "koa-bodyparser": "4.3.0",
+    "koa-jwt": "^4.0.0",
     "koa-router": "^10.0.0",
+    "koa-session": "^6.1.0",
     "koa2": "^2.0.0-alpha.7",
     "mongoose": "^5.11.15",
     "request": "^2.88.2"

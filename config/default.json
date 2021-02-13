@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://DLX123:MADvQG213@cluster0.rfqlo.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    "jwtSecret": "wandX3216"
+}

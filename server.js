@@ -1,13 +1,19 @@
-const koa = require('koa2')
-const router = require('koa-router')();
+const koa = require('koa2');
+const kjwt = require('koa-jwt');
+const bodyParser = require('koa-bodyparser');
+const router = require('./router/api/router');
+const errorHandle = require('./middleware/errorHandle');
+const config = require('config');
+const connectDB = require('./config/db');
+
 app = new koa();
+connectDB();
 const PORT = process.env.PORT || 5000;
-app.use(async (ctx, next) => {
-    await next();
-    ctx.response.type = 'text/html';
-    ctx.response.body = '<h1>Hello, koa2</h1>';
-});
-router.get(' /', async (ctx, next) => {
-    ctx.response.body = '<h1>index</h1>';
-});
+app.use(bodyParser());
+app.use(errorHandle);
+app.use(kjwt({ secret: config.get('jwtSecret') }).unless({
+    path: [/\/users\/login/, /\/users\/register/]
+})).use(router.routes());
+
+
 app.listen(PORT, () => {console.log('running on {$PORT}')});
