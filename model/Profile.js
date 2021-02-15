@@ -1,9 +1,16 @@
+const { number } = require('joi');
 const mongoose = require('mongoose');
 
 const ProfileSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
+    },
+
+    gender: {
+        type: number,
+        default: 0,
+        required: true
     },
 
     bio: {
@@ -13,16 +20,6 @@ const ProfileSchema = new mongoose.Schema({
     watched:{
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'anime'
-    },
-
-    article:{
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'article'
-    },
-
-    liked:{
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'article'
     },
 
     following: {

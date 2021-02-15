@@ -1,4 +1,5 @@
 const validator = require("../utils/validator");
+const idDecoder = require("../utils/idDecoder");
 const User = require('../model/User');
 const Profile = require('../model/Profile');
 const Anime = require('../model/Anime');
@@ -75,7 +76,7 @@ fn_login = async (ctx, next) => {
     const value = result.error == null;
     if(!value) {
         ctx.response.status = 400;
-        return ctx.response.body = `<h1>incorrect entry of user or password, please try again</h1>`;
+        return ctx.response.body = {error: {msg: 'incorrect entry of user or password, please try again'}};
     }
     const {email, password} = request;
     try{
@@ -114,13 +115,65 @@ fn_login = async (ctx, next) => {
     }
 };
 
+fn_postProfile = async (ctx, next) => {
+    const request = ctx.request.body;
+    const result = validator.profile.validate(request, {covert: false});
+    const value = result.error == null;
+    if(!value) {
+        ctx.response.status = 400;
+        return ctx.response.message = result.error;
+    }
+    const {
+        user,
+        gender,
+        bio,
+        watched,
+        following,
+        birthday
+    } = ctx.request.body;
+    const profileField = {};
+    let id = idDecoder(ctx, next);
+    profileField.user = id;
+    if(gender) {
+        profileField.gender = gender;
+    };
+    if(bio) {
+        profileField.bio = bio;
+    };
+    if(watched) {
+        profileField.watched = watched;
+    };
+    if(following) {
+        profileField.following = following;
+    }
+    if(birthday) {
+        profileField.birthday = birthday;
+    }
+
+    try{
+        let profile = await Profile.findOne({user: id});
+        if(profile) {
+            profile = Profile.findOneAndUpdate(
+                {user: id},
+                {$set: profileField},
+                {new: true}
+            );
+            return ctx.response.body = profile;
+        }
+        profile = new Profile(profileField);
+        await profile.save();
+        return ctx.response.body = profile;
+    }catch(err){
+        console.error(err.message);
+        ctx.response.status = err.status || 500;
+        ctx.response.message = err.message;
+    }
+   
+}
+
 fn_getProfile = async (ctx, next) => {
     try{
-        let token = ctx.header.authorization;
-        console.log(token);
-        token = token.replace(/^Bearer\s+/, "");
-        const payload = jwt.verify(token, config.get('jwtSecret'));
-        const id = payload.user.id;
+        let id = idDecoder(ctx, next);
         if(!id) {
             return ctx.body = {
                 type: 'error',

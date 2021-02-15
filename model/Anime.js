@@ -1,3 +1,4 @@
+const { number } = require('joi');
 const mongoose = require('mongoose');
 
 const AnimeSchema = new mongoose.Schema({
@@ -6,9 +7,16 @@ const AnimeSchema = new mongoose.Schema({
         required: true
     },
 
+    startingSeason: {
+        type: number
+    },
+
+    status: {
+        type: number
+    },
+
     about: {
-        type: String,
-        required: true
+        type: String
     },
 
     staff:{
